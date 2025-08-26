@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Server, FileText, Zap, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, Server, FileText, Zap, CheckCircle, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { InstagramDataParser, InstagramPost, ParsedInstagramData } from '@/utils/instagramDataParser';
 
 interface TrainingPost {
   id: string;
@@ -19,7 +20,10 @@ export default function TrainModel() {
   const [trainingProgress, setTrainingProgress] = useState(0);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [posts, setPosts] = useState<TrainingPost[]>([]);
+  const [parsedData, setParsedData] = useState<ParsedInstagramData | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const parser = useRef<InstagramDataParser>(new InstagramDataParser());
 
   // Mock posts data for demonstration
   const mockPosts: TrainingPost[] = [
@@ -43,11 +47,22 @@ export default function TrainModel() {
 
     setIsUploading(true);
     setUploadedFile(file);
+    setError(null);
     
-    // Simulate file processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setPosts(mockPosts);
-    setIsUploading(false);
+    try {
+      // Parse the Instagram data
+      const data = await parser.current.parseInstagramData(file);
+      setParsedData(data);
+      setPosts(data.posts);
+      
+      console.log('Parsed Instagram data:', data);
+    } catch (err) {
+      console.error('Error parsing Instagram data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to parse Instagram data');
+      setPosts([]);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleStartTraining = async () => {
@@ -72,6 +87,15 @@ export default function TrainModel() {
       post.id === id ? { ...post, selected: !post.selected } : post
     ));
   };
+
+  // Cleanup effect to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (parser.current) {
+        parser.current.cleanup();
+      }
+    };
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -154,7 +178,8 @@ export default function TrainModel() {
                       className="space-y-4"
                     >
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                      <p>Processing your data...</p>
+                      <p>Processing your Instagram data...</p>
+                      <p className="text-xs text-muted-foreground">Extracting and parsing metadata...</p>
                     </motion.div>
                   ) : uploadedFile ? (
                     <div className="space-y-2">
@@ -163,6 +188,12 @@ export default function TrainModel() {
                       <p className="text-xs text-muted-foreground">
                         {posts.length} posts extracted
                       </p>
+                      {parsedData && (
+                        <div className="text-xs text-muted-foreground space-y-1">
+                          <p>📁 {parsedData.totalImages} images found</p>
+                          <p>📄 {parsedData.metadataFiles.length} metadata files parsed</p>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -176,6 +207,28 @@ export default function TrainModel() {
                 </div>
               </CardContent>
             </Card>
+            
+            {/* Error Display */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4"
+              >
+                <Card className="glass-card border-red-200 bg-red-50/10">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center space-x-2 text-red-600">
+                      <AlertCircle className="w-5 h-5" />
+                      <p className="font-medium">Error Processing File</p>
+                    </div>
+                    <p className="text-sm text-red-500 mt-2">{error}</p>
+                    <p className="text-xs text-red-400 mt-1">
+                      Please ensure you're uploading a valid Instagram data export ZIP file
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -191,41 +244,71 @@ export default function TrainModel() {
           >
             <Card className="glass-card">
               <CardHeader>
-                <CardTitle>Select Training Data</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-primary" />
+                  Select Training Data
+                </CardTitle>
                 <CardDescription>
                   Choose which posts to include in your training dataset
                 </CardDescription>
+                {parsedData && (
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <span>📊 {posts.length} posts available</span>
+                    <span>🖼️ {parsedData.totalImages} total images</span>
+                    <span>📁 {parsedData.metadataFiles.length} metadata files</span>
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {posts.map((post) => (
-                    <motion.div
-                      key={post.id}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative cursor-pointer rounded-lg overflow-hidden ${
-                        post.selected ? 'ring-2 ring-primary' : ''
-                      }`}
-                      onClick={() => togglePostSelection(post.id)}
-                    >
-                      <img 
-                        src={post.image} 
-                        alt={`Post ${post.id}`}
-                        className="w-full aspect-square object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                        <p className="text-white text-xs text-center p-2">
-                          {post.caption}
-                        </p>
-                      </div>
-                      {post.selected && (
-                        <div className="absolute top-2 right-2">
-                          <CheckCircle className="w-5 h-5 text-primary bg-white rounded-full" />
+                {posts.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <ImageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>No posts found in the uploaded data</p>
+                    <p className="text-sm">Please check that your Instagram export contains valid image and metadata files</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {posts.map((post) => (
+                      <motion.div
+                        key={post.id}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`relative cursor-pointer rounded-lg overflow-hidden ${
+                          post.selected ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => togglePostSelection(post.id)}
+                      >
+                        <img 
+                          src={post.image} 
+                          alt={`Post ${post.id}`}
+                          className="w-full aspect-square object-cover"
+                          onError={(e) => {
+                            // Fallback for broken images
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const fallback = target.parentElement?.querySelector('.image-fallback');
+                            if (fallback) {
+                              (fallback as HTMLElement).style.display = 'flex';
+                            }
+                          }}
+                        />
+                        <div className="image-fallback absolute inset-0 bg-gray-100 flex items-center justify-center" style={{ display: 'none' }}>
+                          <ImageIcon className="w-8 h-8 text-gray-400" />
                         </div>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                          <p className="text-white text-xs text-center p-2">
+                            {post.caption}
+                          </p>
+                        </div>
+                        {post.selected && (
+                          <div className="absolute top-2 right-2">
+                            <CheckCircle className="w-5 h-5 text-primary bg-white rounded-full" />
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
                 
                 <div className="mt-6 flex justify-between items-center">
                   <p className="text-sm text-muted-foreground">
