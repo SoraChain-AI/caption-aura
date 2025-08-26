@@ -1,7 +1,7 @@
 // CaptionCraft - AI-Powered Instagram Caption Generator
 // Redesigned with Federated Learning via Sora Engine and 3D Designer Carousel
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, Wand2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,13 @@ type AppMode = 'home' | 'train' | 'inference';
 
 const Index = () => {
   const [currentMode, setCurrentMode] = useState<AppMode>('home');
+
+  // Listen for custom event to switch to inference
+  useEffect(() => {
+    const handleSwitchToInference = () => setCurrentMode('inference');
+    window.addEventListener('switchToInference', handleSwitchToInference);
+    return () => window.removeEventListener('switchToInference', handleSwitchToInference);
+  }, []);
 
   const renderContent = () => {
     switch (currentMode) {
@@ -32,9 +39,12 @@ const Index = () => {
                 transition={{ duration: 0.8 }}
                 className="space-y-6"
               >
-                <h1 className="text-4xl sm:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent animate-gradient">
-                  Personalized AI Caption Generator — Powered by Federated Learning
+                <h1 className="text-4xl sm:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent animate-gradient leading-tight">
+                  Personalized AI Caption Generator
                 </h1>
+                <p className="text-lg sm:text-xl text-muted-foreground font-medium">
+                  Powered by Federated Learning
+                </p>
               </motion.div>
 
               {/* 3D Designer Carousel */}

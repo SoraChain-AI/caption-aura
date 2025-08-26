@@ -277,8 +277,17 @@ export default function TrainModel() {
                       <CheckCircle className="w-12 h-12 text-success mx-auto" />
                       <h3 className="text-lg font-semibold">Training Complete!</h3>
                       <p className="text-muted-foreground">
-                        Your personalized AI model is ready. Switch to Inference mode to start generating captions.
+                        Your personalized AI model is ready to generate captions!
                       </p>
+                      <Button 
+                        onClick={() => {
+                          // Navigate to inference mode - you'll need to pass this callback from parent
+                          window.dispatchEvent(new CustomEvent('switchToInference'));
+                        }}
+                        className="bg-gradient-ai hover:opacity-90"
+                      >
+                        Start Generating Captions
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

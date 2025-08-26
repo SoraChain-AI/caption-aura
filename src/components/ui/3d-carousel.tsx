@@ -102,6 +102,34 @@ const Carousel = memo(
       (value) => `rotate3d(0, 1, 0, ${value}deg)`
     )
 
+    // Auto-rotation effect - moved here where rotation is defined
+    useEffect(() => {
+      if (!isCarouselActive) return
+
+      let animationId: number
+      const startTime = Date.now()
+      
+      const animate = () => {
+        const elapsed = Date.now() - startTime
+        const rotationSpeed = 0.02 // degrees per frame (adjust for speed)
+        const newRotation = (elapsed * rotationSpeed) % 360
+        
+        rotation.set(newRotation)
+        animationId = requestAnimationFrame(animate)
+      }
+
+      const timeoutId = setTimeout(() => {
+        animationId = requestAnimationFrame(animate)
+      }, 1000) // Start after 1 second
+
+      return () => {
+        clearTimeout(timeoutId)
+        if (animationId) {
+          cancelAnimationFrame(animationId)
+        }
+      }
+    }, [isCarouselActive, rotation])
+
     return (
       <div
         className="flex h-full items-center justify-center"
@@ -180,29 +208,6 @@ function ThreeDPhotoCarousel() {
   useEffect(() => {
     console.log("Cards loaded:", cards)
   }, [cards])
-
-  // Auto-rotation effect
-  useEffect(() => {
-    if (!isCarouselActive) return
-
-    const autoRotate = () => {
-      controls.start({
-        rotateY: "360deg",
-        transition: {
-          duration: 20,
-          ease: "linear",
-          repeat: Infinity,
-        },
-      })
-    }
-
-    const timeoutId = setTimeout(autoRotate, 1000) // Start after 1 second
-
-    return () => {
-      clearTimeout(timeoutId)
-      controls.stop()
-    }
-  }, [isCarouselActive, controls])
 
   const handleClick = (imgUrl: string) => {
     setActiveImg(imgUrl)
