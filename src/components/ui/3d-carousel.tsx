@@ -111,7 +111,7 @@ const Carousel = memo(
       
       const animate = () => {
         const elapsed = Date.now() - startTime
-        const rotationSpeed = 0.02 // degrees per frame (adjust for speed)
+        const rotationSpeed = 0.005 // degrees per frame (slower rotation)
         const newRotation = (elapsed * rotationSpeed) % 360
         
         rotation.set(newRotation)
