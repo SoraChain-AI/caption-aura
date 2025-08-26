@@ -32,19 +32,9 @@ const Index = () => {
                 transition={{ duration: 0.8 }}
                 className="space-y-6"
               >
-                <h1 className="text-5xl md:text-7xl font-bold bg-gradient-primary bg-clip-text text-transparent animate-gradient">
-                  CaptionCraft
+                <h1 className="text-4xl sm:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent animate-gradient">
+                  Personalized AI Caption Generator — Powered by Federated Learning
                 </h1>
-                <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-                  Personalized AI caption generator powered by{' '}
-                  <span className="bg-gradient-ai bg-clip-text text-transparent font-semibold">
-                    Liquid AI LFM
-                  </span>{' '}
-                  and{' '}
-                  <span className="bg-gradient-ai bg-clip-text text-transparent font-semibold">
-                    Sora Federated Learning
-                  </span>
-                </p>
               </motion.div>
 
               {/* 3D Designer Carousel */}

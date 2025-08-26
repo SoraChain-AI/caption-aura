@@ -181,6 +181,29 @@ function ThreeDPhotoCarousel() {
     console.log("Cards loaded:", cards)
   }, [cards])
 
+  // Auto-rotation effect
+  useEffect(() => {
+    if (!isCarouselActive) return
+
+    const autoRotate = () => {
+      controls.start({
+        rotateY: "360deg",
+        transition: {
+          duration: 20,
+          ease: "linear",
+          repeat: Infinity,
+        },
+      })
+    }
+
+    const timeoutId = setTimeout(autoRotate, 1000) // Start after 1 second
+
+    return () => {
+      clearTimeout(timeoutId)
+      controls.stop()
+    }
+  }, [isCarouselActive, controls])
+
   const handleClick = (imgUrl: string) => {
     setActiveImg(imgUrl)
     setIsCarouselActive(false)
