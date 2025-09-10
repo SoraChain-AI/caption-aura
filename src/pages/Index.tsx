@@ -40,7 +40,7 @@ const Index = () => {
             }} className="space-y-6">
                 <h1 className="text-4xl sm:text-6xl font-bold leading-tight tracking-tight mb-6">
                   <span className="text-primary font-extrabold">
-                    Personalized AI Caption Generator
+                    Personalized InstaCaptions
                   </span>
                   <br />
                   <span className="text-2xl sm:text-3xl text-secondary font-medium">
