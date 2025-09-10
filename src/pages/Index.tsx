@@ -42,10 +42,6 @@ const Index = () => {
                   <span className="text-primary font-extrabold">
                     Personalized InstaCaptions
                   </span>
-                  <br />
-                  <span className="text-2xl sm:text-3xl text-secondary font-medium">
-                    — Powered by Federated Learning
-                  </span>
                 </h1>
                 <p className="text-lg sm:text-xl text-muted-foreground font-medium">Powered by Federated Learning and Liquid AI</p>
               </motion.div>
