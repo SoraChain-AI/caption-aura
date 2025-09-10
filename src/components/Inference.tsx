@@ -11,14 +11,23 @@ interface GeneratedCaption {
   text: string;
   timestamp: Date;
   rating?: 'up' | 'down';
+  model: 'trained' | 'default';
 }
 
-const sampleCaptions = [
-  "Chasing golden hour dreams ✨ Sometimes the most beautiful moments happen when you least expect them #goldenhour #dreaming #grateful",
-  "Coffee in hand, world at my feet ☕ Ready to conquer this beautiful day with positive energy and endless possibilities #motivation #coffee #newday",
-  "Simple moments, extraordinary feelings 💫 Finding magic in the everyday adventures that make life truly wonderful #mindful #blessed #adventure",
-  "Creating memories one sunset at a time 🌅 Each ending brings a new beginning filled with hope and endless possibilities #sunset #memories #hope",
-  "Living my best life, one moment at a time ✨ Embracing every opportunity to grow, learn, and spread joy #livingmybestlife #growth #joy"
+const trainedModelCaptions = [
+  "Another adventure with my favorite humans ✨ Always grateful for these spontaneous moments that remind me why life is so beautiful #blessed #adventures #gratitude",
+  "Coffee dates and deep conversations ☕ Nothing beats those moments when time stops and you're exactly where you need to be #mindfulness #connection #peace",
+  "Chasing sunsets and dreams tonight 🌅 Sometimes the most magical experiences happen when you follow your heart without a plan #dreaming #spontaneous #magic",
+  "Weekend vibes: activated 💫 Ready to embrace whatever this beautiful day brings with open arms and endless curiosity #weekendmood #openheartopen mind #joy",
+  "Creating memories, one laugh at a time ✨ These are the moments that make everything worth it, surrounded by love and laughter #precious #laughter #heart"
+];
+
+const defaultModelCaptions = [
+  "Beautiful sunset captured in this moment. The golden light creates perfect atmosphere for photography. #sunset #photography #nature #beautiful",
+  "Coffee time with friends at a cozy café. Enjoying good company and warm beverages on this lovely day. #coffee #friends #café #goodtimes", 
+  "Exploring new places and discovering hidden gems. Travel opens our minds to different experiences and cultures. #travel #adventure #exploration #discovery",
+  "Weekend relaxation mode activated. Taking time to unwind and recharge for the week ahead. #weekend #relaxation #selfcare #recharge",
+  "Sharing moments of joy and happiness with loved ones. These connections make life meaningful and worthwhile. #joy #happiness #family #love"
 ];
 
 export default function Inference() {
@@ -51,19 +60,31 @@ export default function Inference() {
     // Simulate AI generation delay
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    const randomCaption = sampleCaptions[Math.floor(Math.random() * sampleCaptions.length)];
-    setCurrentCaption(randomCaption);
+    // Generate both trained and default model captions
+    const trainedCaption = trainedModelCaptions[Math.floor(Math.random() * trainedModelCaptions.length)];
+    const defaultCaption = defaultModelCaptions[Math.floor(Math.random() * defaultModelCaptions.length)];
+    
+    const newCaptions: GeneratedCaption[] = [
+      {
+        id: Date.now().toString() + '-trained',
+        text: trainedCaption,
+        timestamp: new Date(),
+        model: 'trained'
+      },
+      {
+        id: Date.now().toString() + '-default',
+        text: defaultCaption,
+        timestamp: new Date(),
+        model: 'default'
+      }
+    ];
+
+    setCurrentCaption(trainedCaption);
     setShowTypewriter(true);
     setIsGenerating(false);
 
-    const newCaption: GeneratedCaption = {
-      id: Date.now().toString(),
-      text: randomCaption,
-      timestamp: new Date()
-    };
-
-    setGeneratedCaptions([newCaption]);
-    setCaptionHistory(prev => [newCaption, ...prev.slice(0, 9)]); // Keep last 10
+    setGeneratedCaptions(newCaptions);
+    setCaptionHistory(prev => [...newCaptions, ...prev.slice(0, 8)]); // Keep last 10
   };
 
   const copyCaption = (text: string) => {
@@ -189,85 +210,172 @@ export default function Inference() {
         </Card>
 
         {/* Caption Results */}
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Wand2 className="w-5 h-5 text-ai-accent" />
-              Generated Caption
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {generatedCaptions.length > 0 ? (
-              <AnimatePresence>
-                {generatedCaptions.map((caption) => (
-                  <motion.div
-                    key={caption.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="space-y-4"
-                  >
-                    <Textarea
-                      value={showTypewriter ? TypewriterText({ text: caption.text }) : caption.text}
-                      readOnly
-                      className="min-h-[120px] resize-none glass-card"
-                    />
-                    
-                    <div className="flex gap-2 justify-between">
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyCaption(caption.text)}
-                          className="glass-card"
-                        >
-                          <Copy className="w-4 h-4 mr-2" />
-                          Copy
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={generateCaption}
-                          disabled={isGenerating}
-                          className="glass-card"
-                        >
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Regenerate
-                        </Button>
-                      </div>
-                      
-                      <div className="flex gap-1">
-                        <Button
-                          variant={caption.rating === 'up' ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => rateCaption(caption.id, 'up')}
-                          className="glass-card"
-                        >
-                          <ThumbsUp className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant={caption.rating === 'down' ? 'destructive' : 'outline'}
-                          size="sm"
-                          onClick={() => rateCaption(caption.id, 'down')}
-                          className="glass-card"
-                        >
-                          <ThumbsDown className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            ) : (
-              <div className="text-center py-12">
-                <Wand2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-muted-foreground">
-                  Upload an image and click generate to see AI-powered captions
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-2">
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Trained Model Results */}
+            <Card className="glass-card border-primary/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-primary">
+                  <Wand2 className="w-5 h-5" />
+                  Your Trained Model
+                </CardTitle>
+                <CardDescription>
+                  Personalized captions based on your Instagram style
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {generatedCaptions.filter(c => c.model === 'trained').length > 0 ? (
+                  <AnimatePresence>
+                    {generatedCaptions.filter(c => c.model === 'trained').map((caption) => (
+                      <motion.div
+                        key={caption.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="space-y-4"
+                      >
+                        <Textarea
+                          value={showTypewriter ? TypewriterText({ text: caption.text }) : caption.text}
+                          readOnly
+                          className="min-h-[120px] resize-none glass-card"
+                        />
+                        
+                        <div className="flex gap-2 justify-between">
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyCaption(caption.text)}
+                              className="glass-card"
+                            >
+                              <Copy className="w-4 h-4 mr-2" />
+                              Copy
+                            </Button>
+                          </div>
+                          
+                          <div className="flex gap-1">
+                            <Button
+                              variant={caption.rating === 'up' ? 'default' : 'outline'}
+                              size="sm"
+                              onClick={() => rateCaption(caption.id, 'up')}
+                              className="glass-card"
+                            >
+                              <ThumbsUp className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant={caption.rating === 'down' ? 'destructive' : 'outline'}
+                              size="sm"
+                              onClick={() => rateCaption(caption.id, 'down')}
+                              className="glass-card"
+                            >
+                              <ThumbsDown className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                ) : (
+                  <div className="text-center py-12">
+                    <Wand2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-muted-foreground">
+                      Upload an image to see your personalized caption
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Default Model Results */}
+            <Card className="glass-card border-ai-accent/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-ai-accent">
+                  <Wand2 className="w-5 h-5" />
+                  Default Liquid AI Model
+                </CardTitle>
+                <CardDescription>
+                  Standard captions from the base AI model
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {generatedCaptions.filter(c => c.model === 'default').length > 0 ? (
+                  <AnimatePresence>
+                    {generatedCaptions.filter(c => c.model === 'default').map((caption) => (
+                      <motion.div
+                        key={caption.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="space-y-4"
+                      >
+                        <Textarea
+                          value={caption.text}
+                          readOnly
+                          className="min-h-[120px] resize-none glass-card"
+                        />
+                        
+                        <div className="flex gap-2 justify-between">
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyCaption(caption.text)}
+                              className="glass-card"
+                            >
+                              <Copy className="w-4 h-4 mr-2" />
+                              Copy
+                            </Button>
+                          </div>
+                          
+                          <div className="flex gap-1">
+                            <Button
+                              variant={caption.rating === 'up' ? 'default' : 'outline'}
+                              size="sm"
+                              onClick={() => rateCaption(caption.id, 'up')}
+                              className="glass-card"
+                            >
+                              <ThumbsUp className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant={caption.rating === 'down' ? 'destructive' : 'outline'}
+                              size="sm"
+                              onClick={() => rateCaption(caption.id, 'down')}
+                              className="glass-card"
+                            >
+                              <ThumbsDown className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                ) : (
+                  <div className="text-center py-12">
+                    <Wand2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-muted-foreground">
+                      Upload an image to see the default caption
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Regenerate Button */}
+          {generatedCaptions.length > 0 && (
+            <div className="flex justify-center mt-6">
+              <Button
+                variant="outline"
+                onClick={generateCaption}
+                disabled={isGenerating}
+                className="glass-card"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Regenerate Both Captions
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Caption History */}
@@ -281,7 +389,7 @@ export default function Inference() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {captionHistory.slice(0, 5).map((caption) => (
+              {captionHistory.slice(0, 10).map((caption) => (
                 <motion.div
                   key={caption.id}
                   initial={{ opacity: 0 }}
@@ -289,6 +397,15 @@ export default function Inference() {
                   className="flex items-start justify-between p-3 glass-card rounded-lg"
                 >
                   <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        caption.model === 'trained' 
+                          ? 'bg-primary/20 text-primary' 
+                          : 'bg-ai-accent/20 text-ai-accent'
+                      }`}>
+                        {caption.model === 'trained' ? 'Your Model' : 'Default AI'}
+                      </span>
+                    </div>
                     <p className="text-sm">{caption.text}</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {caption.timestamp.toLocaleString()}
