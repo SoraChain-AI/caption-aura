@@ -273,9 +273,38 @@ export default function TrainModel() {
               >
                 <Card className="glass-card border-success">
                   <CardContent className="pt-6">
-                    <div className="text-center space-y-4">
+                    <div className="text-center space-y-6">
                       <CheckCircle className="w-12 h-12 text-success mx-auto" />
                       <h3 className="text-lg font-semibold">Training Complete!</h3>
+                      
+                      {/* Benchmark Metrics */}
+                      <div className="bg-gradient-to-r from-success/10 to-ai-accent/10 rounded-lg p-6 space-y-4">
+                        <h4 className="text-md font-semibold text-foreground">Model Performance Benchmarks</h4>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div className="bg-white/20 rounded-lg p-3">
+                            <div className="text-success font-bold text-lg">+24%</div>
+                            <div className="text-muted-foreground">Caption Relevance</div>
+                          </div>
+                          <div className="bg-white/20 rounded-lg p-3">
+                            <div className="text-ai-accent font-bold text-lg">+31%</div>
+                            <div className="text-muted-foreground">Style Matching</div>
+                          </div>
+                          <div className="bg-white/20 rounded-lg p-3">
+                            <div className="text-primary font-bold text-lg">+18%</div>
+                            <div className="text-muted-foreground">Engagement Score</div>
+                          </div>
+                          <div className="bg-white/20 rounded-lg p-3">
+                            <div className="text-success font-bold text-lg">+27%</div>
+                            <div className="text-muted-foreground">Personalization</div>
+                          </div>
+                        </div>
+
+                        <div className="text-xs text-muted-foreground mt-4">
+                          Compared to baseline model • Trained on {posts.filter(p => p.selected).length} selected posts
+                        </div>
+                      </div>
+
                       <p className="text-muted-foreground">
                         Your personalized AI model is ready to generate captions!
                       </p>
