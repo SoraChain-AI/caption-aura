@@ -38,8 +38,14 @@ const Index = () => {
             }} transition={{
               duration: 0.8
             }} className="space-y-6">
-                <h1 className="text-4xl sm:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent animate-gradient leading-tight tracking-tight">
-                  Personalized AI Caption Generator — Powered by Federated Learning
+                <h1 className="text-4xl sm:text-6xl font-bold text-foreground leading-tight tracking-tight mb-6">
+                  <span className="bg-gradient-primary bg-clip-text text-transparent">
+                    Personalized AI Caption Generator
+                  </span>
+                  <br />
+                  <span className="text-3xl sm:text-4xl text-muted-foreground font-medium">
+                    — Powered by Federated Learning
+                  </span>
                 </h1>
                 <p className="text-lg sm:text-xl text-muted-foreground font-medium">Powered by Federated Learning and Liquid AI</p>
               </motion.div>
