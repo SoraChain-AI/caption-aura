@@ -13,14 +13,17 @@ interface TrainingPost {
 }
 
 export default function TrainModel() {
+  const [showConfigUpload, setShowConfigUpload] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionEstablished, setConnectionEstablished] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isTraining, setIsTraining] = useState(false);
   const [trainingProgress, setTrainingProgress] = useState(0);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [configFile, setConfigFile] = useState<File | null>(null);
   const [posts, setPosts] = useState<TrainingPost[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const configInputRef = useRef<HTMLInputElement>(null);
 
   // Mock posts data for demonstration
   const mockPosts: TrainingPost[] = [
@@ -33,6 +36,14 @@ export default function TrainModel() {
   ];
 
   const handleConnect = async () => {
+    setShowConfigUpload(true);
+  };
+
+  const handleConfigUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setConfigFile(file);
     setIsConnected(true);
     // Simulate connection delay  
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -100,7 +111,7 @@ export default function TrainModel() {
         <CardContent>
           <Button 
             onClick={handleConnect}
-            disabled={isConnected}
+            disabled={showConfigUpload || isConnected}
             className="w-full bg-gradient-ai hover:opacity-90 transition-opacity"
           >
             {isConnected ? (
@@ -117,6 +128,61 @@ export default function TrainModel() {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Step 1.5: Upload Configuration File */}
+      <AnimatePresence>
+        {showConfigUpload && !isConnected && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
+                  Upload Configuration File
+                </CardTitle>
+                <CardDescription>
+                  Upload Federated Learning Engine configuration (ZIP file)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                  onClick={() => configInputRef.current?.click()}
+                >
+                  <input
+                    ref={configInputRef}
+                    type="file"
+                    accept=".zip"
+                    onChange={handleConfigUpload}
+                    className="hidden"
+                  />
+                  
+                  {configFile ? (
+                    <div className="space-y-2">
+                      <FileText className="w-8 h-8 text-primary mx-auto" />
+                      <p className="text-sm font-medium">{configFile.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Configuration uploaded successfully
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Upload className="w-8 h-8 text-gray-400 mx-auto" />
+                      <p className="text-sm font-medium">Click to upload Configuration ZIP</p>
+                      <p className="text-xs text-muted-foreground">
+                        Upload your Federated Learning Engine configuration file
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Step 2: Upload ZIP File */}
       <AnimatePresence>
