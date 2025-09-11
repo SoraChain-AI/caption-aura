@@ -196,7 +196,7 @@ export default function TrainModel() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Upload className="w-5 h-5 text-primary" />
-                  Upload ZIP File
+                  Upload Instagram ZIP File
                 </CardTitle>
                 <CardDescription>
                   Upload your Instagram data export (ZIP file)
