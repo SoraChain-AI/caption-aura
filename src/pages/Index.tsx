@@ -3,12 +3,13 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Wand2, Sparkles } from 'lucide-react';
+import { Brain, Wand2, Sparkles, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThreeDPhotoCarousel } from '@/components/ui/3d-carousel';
 import TrainModel from '@/components/TrainModel';
 import Inference from '@/components/Inference';
+import { Link } from 'react-router-dom';
 type AppMode = 'home' | 'train' | 'inference';
 const Index = () => {
   const [currentMode, setCurrentMode] = useState<AppMode>('home');
@@ -200,6 +201,12 @@ const Index = () => {
           </motion.div>
           
           <div className="flex items-center space-x-4">
+            <Link to="/how-it-works">
+              <Button variant="ghost" className="glass-card">
+                <BookOpen className="w-4 h-4 mr-2" />
+                How it Works
+              </Button>
+            </Link>
             <Button variant={currentMode === 'train' ? 'default' : 'ghost'} onClick={() => setCurrentMode('train')} className={currentMode === 'train' ? 'bg-gradient-primary' : 'glass-card'}>
               <Brain className="w-4 h-4 mr-2" />
               Train

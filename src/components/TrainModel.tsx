@@ -14,6 +14,7 @@ interface TrainingPost {
 
 export default function TrainModel() {
   const [isConnected, setIsConnected] = useState(false);
+  const [connectionEstablished, setConnectionEstablished] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isTraining, setIsTraining] = useState(false);
   const [trainingProgress, setTrainingProgress] = useState(0);
@@ -33,7 +34,7 @@ export default function TrainModel() {
 
   const handleConnect = async () => {
     setIsConnected(true);
-    // Simulate connection delay
+    // Simulate connection delay  
     await new Promise(resolve => setTimeout(resolve, 1000));
   };
 
@@ -48,6 +49,7 @@ export default function TrainModel() {
     await new Promise(resolve => setTimeout(resolve, 2000));
     setPosts(mockPosts);
     setIsUploading(false);
+    setConnectionEstablished(true);
   };
 
   const handleStartTraining = async () => {
@@ -116,7 +118,7 @@ export default function TrainModel() {
         </CardContent>
       </Card>
 
-      {/* Step 2: Upload Instagram Data */}
+      {/* Step 2: Upload ZIP File */}
       <AnimatePresence>
         {isConnected && (
           <motion.div
@@ -128,10 +130,10 @@ export default function TrainModel() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Upload className="w-5 h-5 text-primary" />
-                  Upload Instagram Data
+                  Upload ZIP File
                 </CardTitle>
                 <CardDescription>
-                  Upload your Instagram data export (ZIP file) to train your personalized model
+                  Upload your Instagram data export (ZIP file)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -180,9 +182,42 @@ export default function TrainModel() {
         )}
       </AnimatePresence>
 
-      {/* Step 3: Post Selection & Training */}
+      {/* Step 3: Connection Established */}
       <AnimatePresence>
-        {posts.length > 0 && (
+        {connectionEstablished && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="glass-card border-success">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-success" />
+                  Connection Established
+                </CardTitle>
+                <CardDescription>
+                  Successfully connected to SoraEngine with your data
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-success to-ai-accent rounded-full mx-auto flex items-center justify-center">
+                    <Zap className="w-8 h-8 text-white" />
+                  </div>
+                  <p className="text-muted-foreground">
+                    Ready to train your personalized AI model
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Step 4: Post Selection & Training */}
+      <AnimatePresence>
+        {connectionEstablished && posts.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
