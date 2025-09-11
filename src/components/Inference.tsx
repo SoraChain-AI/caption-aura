@@ -6,6 +6,46 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
+// Separate TypewriterText component to avoid hooks violations
+const TypewriterText = ({ text, delay = 50 }: { text: string; delay?: number }) => {
+  const [displayText, setDisplayText] = useState('');
+  
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        setDisplayText(text.slice(0, i + 1));
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, delay);
+
+    return () => clearInterval(timer);
+  }, [text, delay]);
+
+  return displayText;
+};
+
+// Caption display component that handles typewriter effect
+const CaptionDisplay = ({ caption, showTypewriter }: { caption: any; showTypewriter: boolean }) => {
+  if (showTypewriter) {
+    return (
+      <div className="min-h-[120px] w-full p-3 rounded-md border border-input bg-background text-sm resize-none glass-card">
+        <TypewriterText text={caption.text} />
+      </div>
+    );
+  }
+  
+  return (
+    <Textarea
+      value={caption.text}
+      readOnly
+      className="min-h-[120px] resize-none glass-card"
+    />
+  );
+};
+
 interface GeneratedCaption {
   id: string;
   text: string;
@@ -113,25 +153,6 @@ export default function Inference() {
     });
   };
 
-  const TypewriterText = ({ text, delay = 50 }: { text: string; delay?: number }) => {
-    const [displayText, setDisplayText] = useState('');
-    
-    useEffect(() => {
-      let i = 0;
-      const timer = setInterval(() => {
-        if (i < text.length) {
-          setDisplayText(text.slice(0, i + 1));
-          i++;
-        } else {
-          clearInterval(timer);
-        }
-      }, delay);
-
-      return () => clearInterval(timer);
-    }, [text, delay]);
-
-    return displayText;
-  };
 
   return (
     <div className="space-y-8">
@@ -234,11 +255,7 @@ export default function Inference() {
                         exit={{ opacity: 0, y: -20 }}
                         className="space-y-4"
                       >
-                        <Textarea
-                          value={showTypewriter ? TypewriterText({ text: caption.text }) : caption.text}
-                          readOnly
-                          className="min-h-[120px] resize-none glass-card"
-                        />
+                        <CaptionDisplay caption={caption} showTypewriter={showTypewriter} />
                         
                         <div className="flex gap-2 justify-between">
                           <div className="flex gap-2">
