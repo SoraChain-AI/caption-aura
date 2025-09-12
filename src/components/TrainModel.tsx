@@ -143,15 +143,15 @@ export default function TrainModel() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-primary" />
-                  Upload Configuration File
+                  Give Access to Local Configuration File
                 </CardTitle>
                 <CardDescription>
-                  Upload Federated Learning Engine configuration (ZIP file)
+                  Grant access to your local Federated Learning Engine configuration (ZIP file)
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary transition-colors cursor-pointer"
                   onClick={() => configInputRef.current?.click()}
                 >
                   <input
@@ -173,9 +173,9 @@ export default function TrainModel() {
                   ) : (
                     <div className="space-y-2">
                       <Upload className="w-8 h-8 text-gray-400 mx-auto" />
-                      <p className="text-sm font-medium">Click to upload Configuration ZIP</p>
+                      <p className="text-sm font-medium">Give Access to Configuration ZIP file</p>
                       <p className="text-xs text-muted-foreground">
-                        Upload your Federated Learning Engine configuration file
+                        Grant access to your Federated Learning Engine configuration file
                       </p>
                     </div>
                   )}
@@ -198,15 +198,15 @@ export default function TrainModel() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Upload className="w-5 h-5 text-primary" />
-                  Upload Instagram ZIP File
+                  Give Access to Instagram ZIP File
                 </CardTitle>
                 <CardDescription>
-                  Upload your Instagram data export (ZIP file)
+                  Grant access to your Instagram data export (ZIP file)
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary transition-colors cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <input
@@ -237,9 +237,9 @@ export default function TrainModel() {
                   ) : (
                     <div className="space-y-2">
                       <Upload className="w-8 h-8 text-gray-400 mx-auto" />
-                      <p className="text-sm font-medium">Click to upload Instagram ZIP</p>
+                      <p className="text-sm font-medium">Click to give access to Instagram ZIP</p>
                       <p className="text-xs text-muted-foreground">
-                        Drag and drop your Instagram data export here
+                        Drag and drop to grant access to your Instagram data export
                       </p>
                     </div>
                   )}
