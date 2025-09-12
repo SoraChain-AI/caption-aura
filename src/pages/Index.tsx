@@ -195,7 +195,7 @@ const Index = () => {
         }} whileTap={{
           scale: 0.95
         }}>
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-primary">
               CaptionCraft
             </h1>
           </motion.div>
