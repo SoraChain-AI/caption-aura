@@ -87,42 +87,44 @@ export default function TrainModel() {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-4">
-        <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+    <div className="space-y-6 sm:space-y-8 px-4 sm:px-0">
+      <div className="text-center space-y-3 sm:space-y-4">
+        <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
           Train Your AI Model
         </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-2 sm:px-0">
           Connect to our Federated Learning infrastructure powered by Sora Engine to create your personalized caption generator.
         </p>
       </div>
 
       {/* Step 1: Connect to Sora Engine */}
       <Card className="glass-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Server className="w-5 h-5 text-ai-accent" />
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Server className="w-4 h-4 sm:w-5 sm:h-5 text-ai-accent" />
             Connect to Federated Learning Server
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm sm:text-base">
             Establish secure connection to Sora Engine infrastructure
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6 pt-0">
           <Button 
             onClick={handleConnect}
             disabled={showConfigUpload || isConnected}
-            className="w-full bg-gradient-ai hover:opacity-90 transition-opacity"
+            className="w-full bg-gradient-ai hover:opacity-90 transition-opacity text-sm sm:text-base py-2 sm:py-3"
           >
             {isConnected ? (
               <>
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Connected to Sora Engine
+                <span className="hidden sm:inline">Connected to Sora Engine</span>
+                <span className="sm:hidden">Connected</span>
               </>
             ) : (
               <>
                 <Zap className="w-4 h-4 mr-2" />
-                Connect to Sora Engine
+                <span className="hidden sm:inline">Connect to Sora Engine</span>
+                <span className="sm:hidden">Connect</span>
               </>
             )}
           </Button>

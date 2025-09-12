@@ -231,7 +231,7 @@ function ThreeDPhotoCarousel() {
             layoutId={`img-container-${activeImg}`}
             layout="position"
             onClick={handleClose}
-            className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50 m-5 md:m-36 lg:mx-[19rem] rounded-3xl"
+            className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50 m-2 sm:m-5 md:m-36 lg:mx-[19rem] rounded-3xl"
             style={{ willChange: "opacity" }}
             transition={transitionOverlay}
           >
@@ -253,7 +253,7 @@ function ThreeDPhotoCarousel() {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="relative h-[500px] w-full overflow-hidden">
+      <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] w-full overflow-hidden">
         <Carousel
           handleClick={handleClick}
           controls={controls}

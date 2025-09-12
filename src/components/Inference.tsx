@@ -166,26 +166,27 @@ export default function Inference() {
 
 
       {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
         {/* Image Upload Section */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
+          className="lg:col-span-1"
         >
           <Card className="glass-card h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Camera className="w-5 h-5 text-primary" />
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 Upload Image
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm sm:text-base">
                 Select an image for AI caption generation
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6 pt-0">
               <div
-                className="border-2 border-dashed border-primary/20 rounded-xl p-8 text-center hover:border-primary/40 transition-all duration-300 cursor-pointer bg-gradient-to-br from-primary/5 to-transparent"
+                className="border-2 border-dashed border-primary/20 rounded-xl p-4 sm:p-8 text-center hover:border-primary/40 transition-all duration-300 cursor-pointer bg-gradient-to-br from-primary/5 to-transparent"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <input
@@ -197,22 +198,22 @@ export default function Inference() {
                 />
                 
                 {selectedImage ? (
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     <img 
                       src={selectedImage} 
                       alt="Selected" 
-                      className="max-w-full max-h-48 mx-auto rounded-lg object-cover shadow-lg"
+                      className="max-w-full max-h-32 sm:max-h-48 mx-auto rounded-lg object-cover shadow-lg"
                     />
-                    <p className="text-sm text-muted-foreground">Click to change image</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Click to change image</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary/20 to-ai-accent/20 rounded-full flex items-center justify-center">
-                      <Upload className="w-8 h-8 text-primary" />
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-primary/20 to-ai-accent/20 rounded-full flex items-center justify-center">
+                      <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                     </div>
                     <div>
-                      <p className="text-lg font-medium">Upload Your Image</p>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-base sm:text-lg font-medium">Upload Your Image</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                         Drag and drop or click to select
                       </p>
                     </div>
@@ -223,18 +224,20 @@ export default function Inference() {
               <Button 
                 onClick={generateCaption}
                 disabled={!selectedImage || isGenerating}
-                className="w-full bg-gradient-ai hover:opacity-90 text-white font-medium py-3"
+                className="w-full bg-gradient-ai hover:opacity-90 text-white font-medium py-2 sm:py-3 text-sm sm:text-base"
                 size="lg"
               >
                 {isGenerating ? (
                   <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Generating Captions...
+                    <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div>
+                    <span className="hidden sm:inline">Generating Captions...</span>
+                    <span className="sm:hidden">Generating...</span>
                   </>
                 ) : (
                   <>
-                    <Wand2 className="w-5 h-5 mr-2" />
-                    Generate Captions
+                    <Wand2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                    <span className="hidden sm:inline">Generate Captions</span>
+                    <span className="sm:hidden">Generate</span>
                   </>
                 )}
               </Button>
@@ -243,7 +246,7 @@ export default function Inference() {
         </motion.div>
 
         {/* Caption Results */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Trained Model Results */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
@@ -251,18 +254,18 @@ export default function Inference() {
             transition={{ delay: 0.4 }}
           >
             <Card className="glass-card border-primary/30 bg-gradient-to-r from-primary/5 to-transparent">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
-                    <Wand2 className="w-4 h-4 text-white" />
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
+                    <Wand2 className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
                   Your Trained Model
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm sm:text-base">
                   Personalized captions crafted from your Instagram writing style
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-4 sm:p-6 pt-0">
                 {generatedCaptions.filter(c => c.model === 'trained').length > 0 ? (
                   <AnimatePresence>
                     {generatedCaptions.filter(c => c.model === 'trained').map((caption) => (
@@ -442,34 +445,34 @@ export default function Inference() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <div className="text-center space-y-2">
-                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
-                        <TrendingUp className="w-8 h-8 text-white" />
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
+                    <div className="text-center space-y-1 sm:space-y-2">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
+                        <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                       </div>
-                      <div className="text-3xl font-bold text-primary">+24%</div>
-                      <div className="text-sm text-muted-foreground">Caption Relevance</div>
+                      <div className="text-xl sm:text-3xl font-bold text-primary">+24%</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Caption Relevance</div>
                     </div>
-                    <div className="text-center space-y-2">
-                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-ai-accent to-ai-accent/80 rounded-full flex items-center justify-center">
-                        <Target className="w-8 h-8 text-white" />
+                    <div className="text-center space-y-1 sm:space-y-2">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-ai-accent to-ai-accent/80 rounded-full flex items-center justify-center">
+                        <Target className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                       </div>
-                      <div className="text-3xl font-bold text-ai-accent">+31%</div>
-                      <div className="text-sm text-muted-foreground">Style Matching</div>
+                      <div className="text-xl sm:text-3xl font-bold text-ai-accent">+31%</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Style Matching</div>
                     </div>
-                    <div className="text-center space-y-2">
-                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-success to-success/80 rounded-full flex items-center justify-center">
-                        <Zap className="w-8 h-8 text-white" />
+                    <div className="text-center space-y-1 sm:space-y-2">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-success to-success/80 rounded-full flex items-center justify-center">
+                        <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                       </div>
-                      <div className="text-3xl font-bold text-success">+18%</div>
-                      <div className="text-sm text-muted-foreground">Engagement Score</div>
+                      <div className="text-xl sm:text-3xl font-bold text-success">+18%</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Engagement Score</div>
                     </div>
-                    <div className="text-center space-y-2">
-                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary to-ai-accent rounded-full flex items-center justify-center">
-                        <BarChart3 className="w-8 h-8 text-white" />
+                    <div className="text-center space-y-1 sm:space-y-2">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-primary to-ai-accent rounded-full flex items-center justify-center">
+                        <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                       </div>
-                      <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">+27%</div>
-                      <div className="text-sm text-muted-foreground">Personalization</div>
+                      <div className="text-xl sm:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">+27%</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">Personalization</div>
                     </div>
                   </div>
                 </CardContent>

@@ -120,6 +120,19 @@
     background-size: 400% 400%;
     animation: gradient 8s ease infinite;
   }
+
+  /* Mobile optimizations */
+  @media (max-width: 640px) {
+    .glass-card {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    
+    .glass-strong {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  }
 }
 
 @layer utilities {
