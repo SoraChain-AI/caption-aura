@@ -244,58 +244,6 @@ export default function Inference() {
 
         {/* Caption Results */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Benchmark Results Section - Show after inference completes */}
-          {generatedCaptions.length > 0 && (
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <Card className="glass-card border-primary/20 bg-gradient-to-r from-primary/5 via-background to-ai-accent/5">
-                <CardHeader className="text-center">
-                  <CardTitle className="flex items-center justify-center gap-2 text-2xl">
-                    <BarChart3 className="w-6 h-6 text-primary" />
-                    Model Performance Benchmarks
-                  </CardTitle>
-                  <CardDescription className="text-base">
-                    Your trained model vs. Default Liquid AI Model
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <div className="text-center space-y-2">
-                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
-                        <TrendingUp className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="text-3xl font-bold text-primary">+24%</div>
-                      <div className="text-sm text-muted-foreground">Caption Relevance</div>
-                    </div>
-                    <div className="text-center space-y-2">
-                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-ai-accent to-ai-accent/80 rounded-full flex items-center justify-center">
-                        <Target className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="text-3xl font-bold text-ai-accent">+31%</div>
-                      <div className="text-sm text-muted-foreground">Style Matching</div>
-                    </div>
-                    <div className="text-center space-y-2">
-                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-success to-success/80 rounded-full flex items-center justify-center">
-                        <Zap className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="text-3xl font-bold text-success">+18%</div>
-                      <div className="text-sm text-muted-foreground">Engagement Score</div>
-                    </div>
-                    <div className="text-center space-y-2">
-                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary to-ai-accent rounded-full flex items-center justify-center">
-                        <BarChart3 className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">+27%</div>
-                      <div className="text-sm text-muted-foreground">Personalization</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
           {/* Trained Model Results */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
@@ -472,6 +420,60 @@ export default function Inference() {
                 <RefreshCw className="w-5 h-5 mr-2" />
                 Regenerate Both Captions
               </Button>
+            </motion.div>
+          )}
+          
+          {/* Benchmark Results Section - Show after inference completes */}
+          {generatedCaptions.length > 0 && (
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="mt-8"
+            >
+              <Card className="glass-card border-primary/20 bg-gradient-to-r from-primary/5 via-background to-ai-accent/5">
+                <CardHeader className="text-center">
+                  <CardTitle className="flex items-center justify-center gap-2 text-2xl">
+                    <BarChart3 className="w-6 h-6 text-primary" />
+                    Model Performance Benchmarks
+                  </CardTitle>
+                  <CardDescription className="text-base">
+                    Your trained model vs. Default Liquid AI Model
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="text-center space-y-2">
+                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
+                        <TrendingUp className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="text-3xl font-bold text-primary">+24%</div>
+                      <div className="text-sm text-muted-foreground">Caption Relevance</div>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-ai-accent to-ai-accent/80 rounded-full flex items-center justify-center">
+                        <Target className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="text-3xl font-bold text-ai-accent">+31%</div>
+                      <div className="text-sm text-muted-foreground">Style Matching</div>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-success to-success/80 rounded-full flex items-center justify-center">
+                        <Zap className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="text-3xl font-bold text-success">+18%</div>
+                      <div className="text-sm text-muted-foreground">Engagement Score</div>
+                    </div>
+                    <div className="text-center space-y-2">
+                      <div className="w-16 h-16 mx-auto bg-gradient-to-r from-primary to-ai-accent rounded-full flex items-center justify-center">
+                        <BarChart3 className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">+27%</div>
+                      <div className="text-sm text-muted-foreground">Personalization</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           )}
         </div>
