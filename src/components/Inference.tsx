@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, Copy, FlipHorizontal2, Image, Loader2, ThumbsDown, ThumbsUp, Upload, X } from "lucide-react";
+import { Camera, Copy, FlipHorizontal2, Image, Loader2, RefreshCw, Smartphone, ThumbsDown, ThumbsUp, Upload, X } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -133,10 +133,65 @@ const Inference = () => {
     setImage(null);
   }, []);
   
-  // Toggle between front and back camera
-  const toggleCameraFacingMode = useCallback(() => {
-    setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'));
-  }, []);
+  // Toggle between front and back camera with better mobile support
+  const toggleCameraFacingMode = useCallback(async () => {
+    if (isCameraInitializing) return;
+    
+    try {
+      setIsCameraInitializing(true);
+      
+      // Get current video element and stream
+      const video = videoRef.current;
+      const currentStream = streamRef.current;
+      
+      // Stop the current camera stream first
+      if (currentStream) {
+        // Stop all tracks to release the camera
+        currentStream.getTracks().forEach(track => {
+          track.stop();
+          currentStream.removeTrack(track);
+        });
+        
+        // Clear the video source
+        if (video) {
+          video.pause();
+          video.srcObject = null;
+        }
+        
+        streamRef.current = null;
+        setIsCameraActive(false);
+      }
+      
+      // Toggle the facing mode
+      const newFacingMode = facingMode === 'user' ? 'environment' : 'user';
+      setFacingMode(newFacingMode);
+      
+      // Add a small delay to ensure the camera is properly released
+      // This is especially important for mobile devices
+      await new Promise(resolve => {
+        // Use a longer delay for mobile devices
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        setTimeout(resolve, isMobile ? 500 : 300);
+      });
+      
+      // Only restart the camera if we're in camera mode
+      if (cameraMode) {
+        await startCamera();
+      }
+    } catch (error) {
+      console.error('Error toggling camera:', error);
+      toast({
+        title: 'Camera Error',
+        description: 'Failed to switch camera. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      // Add a small delay before allowing another flip
+      setTimeout(() => {
+        setIsCameraInitializing(false);
+      }, 100);
+    }
+  }, [facingMode, cameraMode, startCamera, isCameraInitializing, toast]);
   
   // Handle camera capture
   const captureImage = useCallback(() => {
@@ -285,14 +340,28 @@ const Inference = () => {
                     </div>
                   )}
                   <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
-                    <Button 
-                      variant="secondary" 
-                      size="icon"
-                      onClick={toggleCameraFacingMode}
-                      disabled={isCameraInitializing}
+                    <motion.div
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                     >
-                      <FlipHorizontal2 className="h-5 w-5" />
-                    </Button>
+                      <Button 
+                        variant="secondary" 
+                        size="icon"
+                        onClick={toggleCameraFacingMode}
+                        disabled={isCameraInitializing}
+                        className="relative overflow-hidden"
+                        aria-label="Flip camera"
+                      >
+                        {isCameraInitializing ? (
+                          <RefreshCw className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <>
+                            <FlipHorizontal2 className="h-5 w-5 absolute transition-all duration-300" />
+                            <Smartphone className="h-3 w-3 absolute opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                          </>
+                        )}
+                      </Button>
+                    </motion.div>
                     <Button 
                       variant="default" 
                       size="icon"
