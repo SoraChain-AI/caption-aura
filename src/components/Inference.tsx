@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Wand2, Copy, ThumbsUp, ThumbsDown, RefreshCw, Camera, TrendingUp, BarChart3, Zap, Target } from 'lucide-react';
+import { Upload, Wand2, Copy, ThumbsUp, ThumbsDown, RefreshCw, Camera, BarChart3, Zap } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -444,36 +445,97 @@ export default function Inference() {
                     Your trained model vs. Default Liquid AI Model
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
-                    <div className="text-center space-y-1 sm:space-y-2">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-primary to-primary/80 rounded-full flex items-center justify-center">
-                        <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                      </div>
-                      <div className="text-xl sm:text-3xl font-bold text-primary">+24%</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Caption Relevance</div>
-                    </div>
-                    <div className="text-center space-y-1 sm:space-y-2">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-ai-accent to-ai-accent/80 rounded-full flex items-center justify-center">
-                        <Target className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                      </div>
-                      <div className="text-xl sm:text-3xl font-bold text-ai-accent">+31%</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Style Matching</div>
-                    </div>
-                    <div className="text-center space-y-1 sm:space-y-2">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-success to-success/80 rounded-full flex items-center justify-center">
-                        <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                      </div>
-                      <div className="text-xl sm:text-3xl font-bold text-success">+18%</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Engagement Score</div>
-                    </div>
-                    <div className="text-center space-y-1 sm:space-y-2">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-r from-primary to-ai-accent rounded-full flex items-center justify-center">
-                        <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                      </div>
-                      <div className="text-xl sm:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">+27%</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Personalization</div>
-                    </div>
+                <CardContent className="pt-6">
+                  <div className="h-96 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={[
+                          { 
+                            name: 'Caption Relevance', 
+                            'Base Model': 76, 
+                            'Trained Model': 100,
+                            improvement: 24
+                          },
+                          { 
+                            name: 'Style Matching', 
+                            'Base Model': 69, 
+                            'Trained Model': 100,
+                            improvement: 31
+                          },
+                          { 
+                            name: 'Engagement', 
+                            'Base Model': 82, 
+                            'Trained Model': 100,
+                            improvement: 18
+                          },
+                          { 
+                            name: 'Personalization', 
+                            'Base Model': 73, 
+                            'Trained Model': 100,
+                            improvement: 27
+                          },
+                        ]}
+                        margin={{
+                          top: 20,
+                          right: 30,
+                          left: 20,
+                          bottom: 60,
+                        }}
+                        barGap={4}
+                        barCategoryGap="20%"
+                      >
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        <YAxis 
+                          domain={[0, 100]}
+                          tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                          tickFormatter={(value) => `${value}%`}
+                        />
+                        <Tooltip 
+                          formatter={(value, name) => [`${value}%`, name === 'improvement' ? 'Improvement' : name]}
+                          contentStyle={{
+                            backgroundColor: 'hsl(var(--background))',
+                            borderColor: 'hsl(var(--border))',
+                            borderRadius: 'var(--radius)',
+                          }}
+                        />
+                        <Legend 
+                          verticalAlign="top"
+                          height={36}
+                          formatter={(value) => {
+                            if (value === 'improvement') return 'Improvement';
+                            return value;
+                          }}
+                        />
+                        <Bar 
+                          dataKey="Base Model" 
+                          name="Base Model"
+                          fill="#8884d8"
+                          radius={[4, 4, 0, 0]}
+                          className="opacity-90 hover:opacity-100 transition-opacity"
+                        />
+                        <Bar 
+                          dataKey="Trained Model" 
+                          name="Trained Model"
+                          fill="#82ca9d"
+                          radius={[4, 4, 0, 0]}
+                          className="opacity-90 hover:opacity-100 transition-opacity"
+                        />
+                        <Bar 
+                          dataKey="improvement" 
+                          name="Improvement"
+                          fill="#ffc658"
+                          radius={[4, 4, 0, 0]}
+                          className="opacity-90 hover:opacity-100 transition-opacity"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
