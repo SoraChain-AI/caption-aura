@@ -76,6 +76,8 @@ const Inference = () => {
       // Stop any existing stream first
       stopCamera();
       
+      console.log('Starting camera with facing mode:', facingMode);
+      
       // Try with ideal constraints first
       const constraints = {
         video: {
@@ -92,8 +94,12 @@ const Inference = () => {
         const video = videoRef.current;
         if (video) {
           video.srcObject = newStream;
-          await video.play();
+          video.onloadedmetadata = () => {
+            console.log('Video metadata loaded, playing...');
+            video.play().catch(e => console.error('Video play error:', e));
+          };
           setIsCameraActive(true);
+          console.log('Camera started successfully');
         }
       } catch (error) {
         console.error('Error with ideal constraints, trying basic constraints:', error);
@@ -108,8 +114,12 @@ const Inference = () => {
           const video = videoRef.current;
           if (video) {
             video.srcObject = basicStream;
-            await video.play();
+            video.onloadedmetadata = () => {
+              console.log('Video metadata loaded (fallback), playing...');
+              video.play().catch(e => console.error('Video play error (fallback):', e));
+            };
             setIsCameraActive(true);
+            console.log('Camera started successfully with fallback');
           }
         } catch (fallbackError) {
           console.error('Failed to initialize camera:', fallbackError);
@@ -379,13 +389,18 @@ const Inference = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {cameraMode ? (
-                  <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+                  <div className="relative aspect-video bg-black rounded-lg overflow-hidden min-h-[300px]">
                     <video
                       ref={videoRef}
                       className="w-full h-full object-cover"
                       autoPlay
                       playsInline
                       muted
+                      webkit-playsinline="true"
+                      style={{ 
+                        transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
+                        backgroundColor: '#000'
+                      }}
                     />
                     {isCameraInitializing && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/50">
