@@ -41,9 +41,11 @@ const Inference = () => {
   
   // App state
   const [image, setImage] = useState<string | null>(null);
+  const [environmentImage, setEnvironmentImage] = useState<string | null>(null);
   const [captions, setCaptions] = useState<GeneratedCaption[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showTypewriter, setShowTypewriter] = useState(true);
+  const [currentStep, setCurrentStep] = useState<'upload' | 'environment' | 'generate'>('upload');
   
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -138,8 +140,8 @@ const Inference = () => {
     setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'));
   }, []);
   
-  // Handle camera capture
-  const captureImage = useCallback(() => {
+  // Handle camera capture for environment
+  const captureEnvironment = useCallback(() => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     
@@ -155,12 +157,13 @@ const Inference = () => {
     // Draw current video frame to canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-    // Convert canvas to data URL and set as image
+    // Convert canvas to data URL and set as environment image
     const imageDataUrl = canvas.toDataURL('image/jpeg');
-    setImage(imageDataUrl);
+    setEnvironmentImage(imageDataUrl);
     
-    // Stop camera after capturing
+    // Stop camera after capturing and move to generate step
     setCameraMode(false);
+    setCurrentStep('generate');
   }, []);
   
   // Handle file upload
@@ -173,12 +176,13 @@ const Inference = () => {
       if (event.target?.result) {
         setImage(event.target.result as string);
         setCameraMode(false);
+        setCurrentStep('environment');
       }
     };
     reader.readAsDataURL(file);
   }, []);
 
-  // Generate captions for the image
+  // Generate captions for both images
   const generateCaptions = useCallback(async () => {
     if (!image) return;
     
@@ -186,11 +190,32 @@ const Inference = () => {
     setShowTypewriter(true);
     
     try {
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Simulate API call with timeout - in real implementation, send both images
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
-      // For now, use sample captions
-      setCaptions(sampleCaptions);
+      // Enhanced captions that reference both subject and environment
+      const enhancedCaptions = [
+        {
+          id: '1',
+          text: `Perfect moment captured! ${environmentImage ? 'The ambient lighting and surroundings really complement the main subject. ' : ''}✨ #photography #lifestyle`,
+          likes: 45,
+          dislikes: 1,
+        },
+        {
+          id: '2', 
+          text: `${environmentImage ? 'Love how the environment adds context to this shot! ' : ''}Amazing composition and great vibes 📸 #photooftheday`,
+          likes: 32,
+          dislikes: 0,
+        },
+        {
+          id: '3',
+          text: `${environmentImage ? 'The setting perfectly frames the main subject. ' : ''}Incredible capture! 🔥 #artistic #creative`,
+          likes: 28,
+          dislikes: 2,
+        }
+      ];
+      
+      setCaptions(enhancedCaptions);
     } catch (error) {
       console.error('Error generating captions:', error);
       toast({
@@ -201,7 +226,21 @@ const Inference = () => {
     } finally {
       setIsGenerating(false);
     }
-  }, [image, toast]);
+  }, [image, environmentImage, toast]);
+
+  // Reset workflow
+  const resetWorkflow = useCallback(() => {
+    setImage(null);
+    setEnvironmentImage(null);
+    setCaptions([]);
+    setCurrentStep('upload');
+    setCameraMode(false);
+  }, []);
+
+  // Skip environment capture
+  const skipEnvironment = useCallback(() => {
+    setCurrentStep('generate');
+  }, []);
   
   // Copy caption to clipboard
   const copyCaption = useCallback((text: string) => {
@@ -258,72 +297,41 @@ const Inference = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left side - Camera/Image Upload */}
+        {/* Left side - Step-by-step Image Collection */}
         <div className="space-y-4">
-          <Card>
+          {/* Step 1: Upload Subject Image */}
+          <Card className={currentStep === 'upload' ? 'ring-2 ring-primary' : ''}>
             <CardHeader>
-              <CardTitle>Upload or Capture Image</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm ${
+                  image ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}>
+                  1
+                </span>
+                Upload Subject Image
+              </CardTitle>
               <CardDescription>
-                {cameraMode 
-                  ? 'Position your camera and capture an image' 
-                  : 'Upload an image or use your camera'}
+                Upload the main subject or image you want to create captions for
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {cameraMode ? (
-                <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    playsInline
-                    muted
-                  />
-                  {isCameraInitializing && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                      <Loader2 className="h-8 w-8 animate-spin text-white" />
-                    </div>
-                  )}
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
-                    <Button 
-                      variant="secondary" 
-                      size="icon"
-                      onClick={toggleCameraFacingMode}
-                      disabled={isCameraInitializing}
-                    >
-                      <FlipHorizontal2 className="h-5 w-5" />
-                    </Button>
-                    <Button 
-                      variant="default" 
-                      size="icon"
-                      className="h-14 w-14 rounded-full"
-                      onClick={captureImage}
-                      disabled={!isCameraActive || isCameraInitializing}
-                    >
-                      <Camera className="h-6 w-6" />
-                    </Button>
-                    <Button 
-                      variant="secondary" 
-                      size="icon"
-                      onClick={toggleCameraMode}
-                      disabled={isCameraInitializing}
-                    >
-                      <X className="h-5 w-5" />
-                    </Button>
-                  </div>
-                </div>
-              ) : image ? (
+              {image ? (
                 <div className="relative">
                   <img 
                     src={image} 
-                    alt="Captured" 
-                    className="w-full h-auto rounded-lg"
+                    alt="Subject" 
+                    className="w-full h-auto rounded-lg max-h-64 object-cover"
                   />
                   <Button
                     variant="ghost"
                     size="icon"
                     className="absolute top-2 right-2 bg-white/80 hover:bg-white"
-                    onClick={() => setImage(null)}
+                    onClick={() => {
+                      setImage(null);
+                      setCurrentStep('upload');
+                      setEnvironmentImage(null);
+                      setCaptions([]);
+                    }}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -349,57 +357,181 @@ const Inference = () => {
                   />
                 </div>
               )}
-              
-              {!cameraMode && !image && (
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={toggleCameraMode}
-                  disabled={isCameraInitializing}
-                >
-                  <Camera className="h-4 w-4 mr-2" />
-                  Use Camera
-                </Button>
-              )}
-              
-              {image && (
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={() => setImage(null)}
-                  >
-                    Remove Image
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={toggleCameraMode}
-                    disabled={isCameraInitializing}
-                  >
-                    <Camera className="h-4 w-4 mr-2" />
-                    Retake Photo
-                  </Button>
-                </div>
-              )}
             </CardContent>
           </Card>
-          
+
+          {/* Step 2: Capture Environment */}
           {image && (
-            <Button 
-              className="w-full"
-              onClick={generateCaptions}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generating Captions...
-                </>
-              ) : (
-                'Generate Captions'
-              )}
-            </Button>
+            <Card className={currentStep === 'environment' ? 'ring-2 ring-primary' : ''}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm ${
+                    environmentImage ? 'bg-primary text-primary-foreground' : 
+                    currentStep === 'environment' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+                  }`}>
+                    2
+                  </span>
+                  Capture Environment (Optional)
+                </CardTitle>
+                <CardDescription>
+                  Capture your current environment to add personalized context to your captions
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {cameraMode ? (
+                  <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+                    <video
+                      ref={videoRef}
+                      className="w-full h-full object-cover"
+                      autoPlay
+                      playsInline
+                      muted
+                    />
+                    {isCameraInitializing && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                        <Loader2 className="h-8 w-8 animate-spin text-white" />
+                      </div>
+                    )}
+                    <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+                      <Button 
+                        variant="secondary" 
+                        size="icon"
+                        onClick={toggleCameraFacingMode}
+                        disabled={isCameraInitializing}
+                      >
+                        <FlipHorizontal2 className="h-5 w-5" />
+                      </Button>
+                      <Button 
+                        variant="default" 
+                        size="icon"
+                        className="h-14 w-14 rounded-full"
+                        onClick={captureEnvironment}
+                        disabled={!isCameraActive || isCameraInitializing}
+                      >
+                        <Camera className="h-6 w-6" />
+                      </Button>
+                      <Button 
+                        variant="secondary" 
+                        size="icon"
+                        onClick={toggleCameraMode}
+                        disabled={isCameraInitializing}
+                      >
+                        <X className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </div>
+                ) : environmentImage ? (
+                  <div className="relative">
+                    <img 
+                      src={environmentImage} 
+                      alt="Environment" 
+                      className="w-full h-auto rounded-lg max-h-64 object-cover"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+                      onClick={() => {
+                        setEnvironmentImage(null);
+                        setCurrentStep('environment');
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : currentStep === 'environment' ? (
+                  <div className="space-y-4">
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={toggleCameraMode}
+                      disabled={isCameraInitializing}
+                    >
+                      <Camera className="h-4 w-4 mr-2" />
+                      Capture Environment
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full"
+                      onClick={skipEnvironment}
+                    >
+                      Skip Environment Capture
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Camera className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Complete step 1 first</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Step 3: Generate Captions */}
+          {image && currentStep === 'generate' && (
+            <Card className="ring-2 ring-primary">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">
+                    3
+                  </span>
+                  Generate Personalized Captions
+                </CardTitle>
+                <CardDescription>
+                  {environmentImage 
+                    ? 'Generate captions using both your subject and environment for maximum personalization'
+                    : 'Generate captions for your subject image'
+                  }
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex gap-4">
+                  <Button 
+                    className="flex-1"
+                    onClick={generateCaptions}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Generating Personalized Captions...
+                      </>
+                    ) : (
+                      `Generate ${environmentImage ? 'Personalized ' : ''}Captions`
+                    )}
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={resetWorkflow}
+                  >
+                    Start Over
+                  </Button>
+                </div>
+                
+                {/* Preview both images */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium mb-2">Subject</p>
+                    <img 
+                      src={image} 
+                      alt="Subject" 
+                      className="w-full h-24 object-cover rounded border"
+                    />
+                  </div>
+                  {environmentImage && (
+                    <div>
+                      <p className="text-sm font-medium mb-2">Environment</p>
+                      <img 
+                        src={environmentImage} 
+                        alt="Environment" 
+                        className="w-full h-24 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
         
@@ -410,13 +542,21 @@ const Inference = () => {
               <CardTitle>Generated Captions</CardTitle>
               <CardDescription>
                 {captions.length > 0 
-                  ? 'Here are the generated captions for your image'
-                  : 'Upload or capture an image to generate captions'}
+                  ? `Personalized captions ${environmentImage ? 'using both subject and environment context' : 'for your image'}`
+                  : 'Follow the steps on the left to generate personalized captions'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {captions.length > 0 ? (
                 <div className="space-y-4">
+                  {environmentImage && (
+                    <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 mb-4">
+                      <p className="text-sm font-medium text-primary mb-1">✨ Personalized Captions</p>
+                      <p className="text-xs text-muted-foreground">
+                        These captions were generated using both your subject image and environmental context for maximum personalization.
+                      </p>
+                    </div>
+                  )}
                   {captions.map((caption) => (
                     <div key={caption.id} className="border rounded-lg p-4 space-y-3">
                       <div className="flex items-start justify-between">
@@ -465,9 +605,13 @@ const Inference = () => {
                 <div className="text-center py-12">
                   <Image className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <p className="text-muted-foreground">
-                    {image 
-                      ? 'Click "Generate Captions" to create captions for your image'
-                      : 'No image selected. Upload or capture an image to generate captions.'}
+                    {!image 
+                      ? 'Start by uploading a subject image in step 1'
+                      : currentStep === 'environment'
+                      ? 'Optionally capture your environment in step 2, then generate captions'
+                      : currentStep === 'generate'
+                      ? 'Click "Generate Captions" to create personalized captions'
+                      : 'Follow the steps to generate captions'}
                   </p>
                 </div>
               )}
@@ -486,7 +630,7 @@ const Inference = () => {
                 </Button>
               </div>
               <div className="text-xs">
-                {captions.length} captions generated
+                {captions.length} {environmentImage ? 'personalized ' : ''}captions generated
               </div>
             </div>
           )}
