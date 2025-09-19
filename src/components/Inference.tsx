@@ -305,141 +305,83 @@ const Inference = () => {
   }, [stopCamera]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left side - Step-by-step Image Collection */}
-        <div className="space-y-4">
-          {/* Step 1: Upload Subject Image */}
-          <Card className={currentStep === 'upload' ? 'ring-2 ring-primary' : ''}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm ${
-                  image ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}>
-                  1
-                </span>
-                Upload Subject Image
-              </CardTitle>
-              <CardDescription>
-                Upload the main subject or image you want to create captions for
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {image ? (
-                <div className="relative">
-                  <img 
-                    src={image} 
-                    alt="Subject" 
-                    className="w-full h-auto rounded-lg max-h-64 object-cover"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-2 right-2 bg-white/80 hover:bg-white"
-                    onClick={() => {
-                      setImage(null);
-                      setCurrentStep('upload');
-                      setEnvironmentImage(null);
-                      setCaptions([]);
-                    }}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div 
-                  className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-accent/50 transition-colors"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    Click to upload or drag and drop
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    JPG, PNG, or WebP (max. 5MB)
-                  </p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
+    <main className="relative min-h-screen bg-[radial-gradient(1200px_600px_at_50%_-200px,rgba(59,130,246,0.15),transparent),radial-gradient(900px_500px_at_80%_100%,rgba(168,85,247,0.12),transparent),radial-gradient(800px_400px_at_10%_80%,rgba(20,184,166,0.12),transparent)] text-foreground">
+      {/* Aurora Background Effects */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-10 h-[40rem] w-[40rem] -translate-x-1/2 rounded-full blur-3xl bg-gradient-to-tr from-teal-500/20 via-cyan-500/10 to-purple-500/20" />
+        <div className="absolute right-10 bottom-0 h-72 w-72 rounded-full blur-2xl bg-teal-500/20" />
+        <div className="absolute left-10 top-1/3 h-60 w-60 rounded-full blur-2xl bg-purple-500/20" />
+      </div>
 
-          {/* Step 2: Capture Environment */}
-          {image && (
-            <Card className={currentStep === 'environment' ? 'ring-2 ring-primary' : ''}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-sm ${
-                    environmentImage ? 'bg-primary text-primary-foreground' : 
-                    currentStep === 'environment' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+      {/* Hero Section */}
+      <section className="relative isolate overflow-hidden">
+        <div className="container mx-auto max-w-5xl px-6 pt-20 pb-16">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-balance text-3xl font-bold tracking-tight md:text-5xl text-center"
+          >
+            Federated Learning + Live Context = Hyper-Personalization
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+            className="mt-5 max-w-2xl text-pretty text-lg text-muted-foreground text-center mx-auto"
+          >
+            Your captions shouldn't just describe the photo. They should capture the entire moment — in your voice.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* How It Works Process */}
+      <section className="relative border-t border-white/10">
+        <div className="container mx-auto max-w-6xl px-6 py-16">
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-2xl font-semibold md:text-3xl text-center mb-10"
+          >
+            Generate Your Perfect Caption
+          </motion.h2>
+
+          <div className="grid gap-8 lg:grid-cols-2">
+            {/* Left side - Step-by-step Process */}
+            <div className="space-y-6">
+              {/* Step 1: Upload Subject Image */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className={`relative overflow-hidden rounded-xl border ${
+                  currentStep === 'upload' 
+                    ? 'border-teal-400/40 bg-gradient-to-br from-teal-500/10 via-transparent to-purple-500/10' 
+                    : 'border-white/10 bg-white/[0.03]'
+                } p-6 backdrop-blur`}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    image ? 'bg-teal-500 text-white' : 
+                    currentStep === 'upload' ? 'bg-teal-500/20 text-teal-300' : 'bg-white/10 text-white/60'
                   }`}>
-                    2
+                    1
                   </span>
-                  Capture Environment (Optional)
-                </CardTitle>
-                <CardDescription>
-                  Capture your current environment to add personalized context to your captions
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {cameraMode ? (
-                  <div className="relative aspect-video bg-black rounded-lg overflow-hidden min-h-[300px]">
-                    <video
-                      ref={videoRef}
-                      className="w-full h-full object-cover"
-                      autoPlay
-                      playsInline
-                      muted
-                      webkit-playsinline="true"
-                      style={{ 
-                        transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
-                        backgroundColor: '#000'
-                      }}
-                    />
-                    {isCameraInitializing && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                        <Loader2 className="h-8 w-8 animate-spin text-white" />
-                      </div>
-                    )}
-                    <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
-                      <Button 
-                        variant="secondary" 
-                        size="icon"
-                        onClick={toggleCameraFacingMode}
-                        disabled={isCameraInitializing}
-                      >
-                        <FlipHorizontal2 className="h-5 w-5" />
-                      </Button>
-                      <Button 
-                        variant="default" 
-                        size="icon"
-                        className="h-14 w-14 rounded-full"
-                        onClick={captureEnvironment}
-                        disabled={!isCameraActive || isCameraInitializing}
-                      >
-                        <Camera className="h-6 w-6" />
-                      </Button>
-                      <Button 
-                        variant="secondary" 
-                        size="icon"
-                        onClick={toggleCameraMode}
-                        disabled={isCameraInitializing}
-                      >
-                        <X className="h-5 w-5" />
-                      </Button>
-                    </div>
-                  </div>
-                ) : environmentImage ? (
+                  <h3 className="text-lg font-semibold">Upload Subject Image</h3>
+                  {currentStep === 'upload' && <span className="text-xs text-teal-300">→ Active</span>}
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Upload the main subject or image you want to create captions for
+                </p>
+
+                {image ? (
                   <div className="relative">
                     <img 
-                      src={environmentImage} 
-                      alt="Environment" 
+                      src={image} 
+                      alt="Subject" 
                       className="w-full h-auto rounded-lg max-h-64 object-cover"
                     />
                     <Button
@@ -447,236 +389,376 @@ const Inference = () => {
                       size="icon"
                       className="absolute top-2 right-2 bg-white/80 hover:bg-white"
                       onClick={() => {
+                        setImage(null);
+                        setCurrentStep('upload');
                         setEnvironmentImage(null);
-                        setCurrentStep('environment');
+                        setCaptions([]);
                       }}
                     >
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
-                ) : currentStep === 'environment' ? (
-                  <div className="space-y-4">
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={toggleCameraMode}
-                      disabled={isCameraInitializing}
-                    >
-                      <Camera className="h-4 w-4 mr-2" />
-                      Capture Environment
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      className="w-full"
-                      onClick={skipEnvironment}
-                    >
-                      Skip Environment Capture
-                    </Button>
-                  </div>
                 ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Camera className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Complete step 1 first</p>
+                  <div 
+                    className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center cursor-pointer hover:bg-white/5 transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">
+                      Click to upload or drag and drop
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      JPG, PNG, or WebP (max. 5MB)
+                    </p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          )}
+              </motion.div>
 
-          {/* Step 3: Generate Captions */}
-          {image && currentStep === 'generate' && (
-            <Card className="ring-2 ring-primary">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">
-                    3
-                  </span>
-                  Generate Personalized Captions
-                </CardTitle>
-                <CardDescription>
-                  {environmentImage 
-                    ? 'Generate captions using both your subject and environment for maximum personalization'
-                    : 'Generate captions for your subject image'
-                  }
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex gap-4">
+              {/* Step 2: Capture Environment */}
+              {image && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className={`relative overflow-hidden rounded-xl border ${
+                    currentStep === 'environment' 
+                      ? 'border-teal-400/40 bg-gradient-to-br from-teal-500/10 via-transparent to-purple-500/10' 
+                      : 'border-white/10 bg-white/[0.03]'
+                  } p-6 backdrop-blur`}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                      environmentImage ? 'bg-teal-500 text-white' : 
+                      currentStep === 'environment' ? 'bg-teal-500/20 text-teal-300' : 'bg-white/10 text-white/60'
+                    }`}>
+                      2
+                    </span>
+                    <h3 className="text-lg font-semibold">Live Context Capture</h3>
+                    {currentStep === 'environment' && <span className="text-xs text-teal-300">→ Active</span>}
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Capture your environment to add personalized context
+                  </p>
+
+                  {cameraMode ? (
+                    <div className="relative aspect-video bg-black rounded-lg overflow-hidden min-h-[300px]">
+                      <video
+                        ref={videoRef}
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        playsInline
+                        muted
+                        webkit-playsinline="true"
+                        style={{ 
+                          transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
+                          backgroundColor: '#000'
+                        }}
+                      />
+                      {isCameraInitializing && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                          <Loader2 className="h-8 w-8 animate-spin text-white" />
+                        </div>
+                      )}
+                      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+                        <Button 
+                          variant="secondary" 
+                          size="icon"
+                          onClick={toggleCameraFacingMode}
+                          disabled={isCameraInitializing}
+                        >
+                          <FlipHorizontal2 className="h-5 w-5" />
+                        </Button>
+                        <Button 
+                          variant="default" 
+                          size="icon"
+                          className="h-14 w-14 rounded-full bg-gradient-to-r from-teal-500 to-purple-500"
+                          onClick={captureEnvironment}
+                          disabled={!isCameraActive || isCameraInitializing}
+                        >
+                          <Camera className="h-6 w-6" />
+                        </Button>
+                        <Button 
+                          variant="secondary" 
+                          size="icon"
+                          onClick={toggleCameraMode}
+                          disabled={isCameraInitializing}
+                        >
+                          <X className="h-5 w-5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : environmentImage ? (
+                    <div className="relative">
+                      <img 
+                        src={environmentImage} 
+                        alt="Environment" 
+                        className="w-full h-auto rounded-lg max-h-64 object-cover"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+                        onClick={() => {
+                          setEnvironmentImage(null);
+                          setCurrentStep('environment');
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : currentStep === 'environment' ? (
+                    <div className="space-y-4">
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-teal-500/30 text-teal-300 hover:bg-teal-500/10"
+                        onClick={toggleCameraMode}
+                        disabled={isCameraInitializing}
+                      >
+                        <Camera className="h-4 w-4 mr-2" />
+                        Capture Live Context
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full text-white/70 hover:bg-white/5"
+                        onClick={skipEnvironment}
+                      >
+                        Skip Context Capture
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Camera className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">Complete step 1 first</p>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {/* Step 3: Generate Captions */}
+              {image && currentStep === 'generate' && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="relative overflow-hidden rounded-xl border border-teal-400/40 bg-gradient-to-br from-teal-500/10 via-transparent to-purple-500/10 p-6 backdrop-blur"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-teal-500/20 text-teal-300">
+                      3
+                    </span>
+                    <h3 className="text-lg font-semibold">Generate Personalized Captions</h3>
+                    <span className="text-xs text-teal-300">→ Active</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {environmentImage 
+                      ? "Using federated learning to create personalized captions with live context"
+                      : "Generating base captions using your trained model"
+                    }
+                  </p>
+
                   <Button 
-                    className="flex-1"
                     onClick={generateCaptions}
                     disabled={isGenerating}
+                    className="w-full bg-gradient-to-r from-teal-500 to-purple-500 hover:from-teal-600 hover:to-purple-600"
                   >
                     {isGenerating ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Generating Personalized Captions...
+                        Generating...
                       </>
                     ) : (
-                      `Generate ${environmentImage ? 'Personalized ' : ''}Captions`
+                      'Generate Captions'
                     )}
                   </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={resetWorkflow}
-                  >
-                    Start Over
-                  </Button>
-                </div>
-                
-                {/* Preview both images */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm font-medium mb-2">Subject</p>
-                    <img 
-                      src={image} 
-                      alt="Subject" 
-                      className="w-full h-24 object-cover rounded border"
-                    />
-                  </div>
-                  {environmentImage && (
-                    <div>
-                      <p className="text-sm font-medium mb-2">Environment</p>
-                      <img 
-                        src={environmentImage} 
-                        alt="Environment" 
-                        className="w-full h-24 object-cover rounded border"
-                      />
-                    </div>
+
+                  {captions.length > 0 && (
+                    <Button 
+                      onClick={resetWorkflow}
+                      variant="outline"
+                      className="w-full mt-3 border-white/20 text-white/70 hover:bg-white/5"
+                    >
+                      Start Over
+                    </Button>
                   )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-        
-        {/* Right side - Captions */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Generated Captions</CardTitle>
-              <CardDescription>
-                {captions.length > 0 
-                  ? `Personalized captions ${environmentImage ? 'using both subject and environment context' : 'for your image'}`
-                  : 'Follow the steps on the left to generate personalized captions'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {captions.length > 0 ? (
-                <div className="space-y-4">
-                  {environmentImage && (
-                    <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 mb-4">
-                      <p className="text-sm font-medium text-primary mb-1">✨ Personalized Captions</p>
-                      <p className="text-xs text-muted-foreground">
-                        These captions were generated using both your subject image and environmental context for maximum personalization.
-                      </p>
-                    </div>
-                  )}
-                  {captions.map((caption) => (
-                    <div key={caption.id} className="border rounded-lg p-4 space-y-3">
-                      <div className="flex items-start justify-between">
-                        <p className="text-sm">
-                          {showTypewriter ? (
-                            <TypewriterText text={caption.text} />
-                          ) : (
-                            caption.text
-                          )}
-                        </p>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8"
-                          onClick={() => copyCaption(caption.text)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <div className="flex items-center space-x-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className={`h-8 px-2 ${caption.userRating === 'up' ? 'text-green-500' : ''}`}
-                            onClick={() => rateCaption(caption.id, 'up')}
-                          >
-                            <ThumbsUp className="h-4 w-4 mr-1" />
-                            {caption.likes}
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className={`h-8 px-2 ${caption.userRating === 'down' ? 'text-red-500' : ''}`}
-                            onClick={() => rateCaption(caption.id, 'down')}
-                          >
-                            <ThumbsDown className="h-4 w-4 mr-1" />
-                            {caption.dislikes}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Image className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    {!image 
-                      ? 'Start by uploading a subject image in step 1'
-                      : currentStep === 'environment'
-                      ? 'Optionally capture your environment in step 2, then generate captions'
-                      : currentStep === 'generate'
-                      ? 'Click "Generate Captions" to create personalized captions'
-                      : 'Follow the steps to generate captions'}
-                  </p>
-                </div>
+                </motion.div>
               )}
-            </CardContent>
-          </Card>
-          
-          {captions.length > 0 && (
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <div className="flex items-center space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setShowTypewriter(!showTypewriter)}
-                >
-                  {showTypewriter ? 'Show Full Text' : 'Show Typewriter Effect'}
-                </Button>
-              </div>
-              <div className="text-xs">
-                {captions.length} {environmentImage ? 'personalized ' : ''}captions generated
-              </div>
             </div>
-          )}
+
+            {/* Right side - Generated Captions */}
+            <div className="space-y-6">
+              {/* Live Demo or Results */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur"
+              >
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <span className="text-teal-400">✨</span>
+                  {captions.length > 0 ? 'Generated Captions' : 'Live Caption Demo'}
+                </h3>
+
+                {captions.length > 0 ? (
+                  <div className="space-y-4">
+                    {captions.map((caption) => (
+                      <motion.div
+                        key={caption.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: parseInt(caption.id) * 0.1 }}
+                        className="rounded-lg border border-white/10 bg-white/[0.02] p-4"
+                      >
+                        <p className="text-sm mb-3 leading-relaxed">{caption.text}</p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <ThumbsUp className="h-3 w-3" />
+                              {caption.likes}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <ThumbsDown className="h-3 w-3" />
+                              {caption.dislikes}
+                            </span>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => rateCaption(caption.id, 'up')}
+                              disabled={caption.userRating === 'up'}
+                            >
+                              <ThumbsUp className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => rateCaption(caption.id, 'down')}
+                              disabled={caption.userRating === 'down'}
+                            >
+                              <ThumbsDown className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => copyCaption(caption.text)}
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="mb-4">
+                      <div className="inline-flex items-center gap-2 rounded-full bg-teal-500/10 px-3 py-1 text-xs text-teal-300">
+                        Base caption vs Personalized
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      See how live context transforms generic captions into personalized ones
+                    </p>
+                    <div className="space-y-3">
+                      <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3 text-left">
+                        <div className="text-xs text-white/50 mb-1">Base:</div>
+                        <div className="text-sm">"Beautiful sunset at the beach 🌅"</div>
+                      </div>
+                      <div className="rounded-lg border border-teal-500/20 bg-gradient-to-r from-teal-500/5 to-purple-500/5 p-3 text-left">
+                        <div className="text-xs text-teal-300 mb-1">+ Live Context:</div>
+                        <div className="text-sm">"Perfect end to an amazing surf session! The golden hour lighting here at Malibu never gets old 🌅🏄‍♂️ #surflife #malibusunset"</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Federated Learning Info */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur"
+              >
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <span className="text-purple-400">🔒</span>
+                  Privacy-First Learning
+                </h3>
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <p>
+                    Your data trains models locally on your device. Only encrypted model updates are shared, never your personal photos or captions.
+                  </p>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="rounded-lg bg-white/[0.02] p-2">
+                      <div className="text-xs text-teal-300">Local Training</div>
+                      <div className="text-xs">On-device</div>
+                    </div>
+                    <div className="rounded-lg bg-white/[0.02] p-2">
+                      <div className="text-xs text-purple-300">Federated Updates</div>
+                      <div className="text-xs">Encrypted</div>
+                    </div>
+                    <div className="rounded-lg bg-white/[0.02] p-2">
+                      <div className="text-xs text-cyan-300">Global Model</div>
+                      <div className="text-xs">Improved</div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </div>
-      </div>
-      
+      </section>
+
       {/* Hidden canvas for image capture */}
       <canvas ref={canvasRef} className="hidden" />
-    </div>
+    </main>
   );
 };
 
-// Typewriter effect component
-const TypewriterText = ({ text, delay = 50 }: { text: string; delay?: number }) => {
+// TypewriterText component
+const TypewriterText = ({ 
+  text, 
+  delay = 50, 
+  className = "" 
+}: { 
+  text: string; 
+  delay?: number; 
+  className?: string; 
+}) => {
   const [displayText, setDisplayText] = useState('');
-  
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
-    let i = 0;
-    const timer = setInterval(() => {
-      if (i < text.length) {
-        setDisplayText(text.slice(0, i + 1));
-        i++;
-      } else {
-        clearInterval(timer);
-      }
-    }, delay);
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, delay);
 
-    return () => clearInterval(timer);
-  }, [text, delay]);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, delay, text]);
 
-  return <span>{displayText}</span>;
+  useEffect(() => {
+    setDisplayText('');
+    setCurrentIndex(0);
+  }, [text]);
+
+  return <span className={className}>{displayText}</span>;
 };
 
 export default Inference;
